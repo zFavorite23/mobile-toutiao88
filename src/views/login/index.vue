@@ -5,26 +5,45 @@
 
     <!-- 输入框 -->
     <van-cell-group>
-      <van-field
-        required
-        clearable
-        label="手机号"
-        right-icon="question-o"
-        placeholder="请输入手机号"
-        @click-right-icon="$toast('question')"
-      />
-      <van-field type="password" label="验证码" placeholder="请输入验证码" required />
+      <van-field v-model="user.mobile" label="手机号" placeholder="请输入手机号" />
+      <van-field v-model="user.code" label="验证码" placeholder="请输入验证码" />
     </van-cell-group>
 
     <!-- 登陆按钮 -->
     <div class="btn">
-      <van-button type="info">登陆</van-button>
+      <van-button type="info" @click="onLogin">登陆</van-button>
     </div>
   </div>
 </template>
 
 <script>
-export default {}
+// 引入axios
+import request from '@/utils/request'
+export default {
+  data () {
+    return {
+      user: {
+        mobile: '13911111111',
+        code: '246810'
+      }
+    }
+  },
+  methods: {
+    // 登陆
+    async onLogin () {
+      try {
+        const res = await request({
+          method: 'POST',
+          url: '/app/v1_0/authorizations',
+          data: this.user
+        })
+        console.log('登陆成功', res)
+      } catch (err) {
+        console.log('登陆失败', err)
+      }
+    }
+  }
+}
 </script>
 
 <style lang="less" scoped>
