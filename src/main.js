@@ -2,10 +2,9 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import 'amfe-flexible' // 引入REM基准值
+import './utils/register-vant.js' // 引入vant组件
 
-import { Button } from 'vant'
-
-Vue.use(Button)
 Vue.config.productionTip = false
 
 new Vue({
