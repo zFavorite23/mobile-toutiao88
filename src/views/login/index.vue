@@ -31,6 +31,11 @@ export default {
   methods: {
     // 登陆
     async onLogin () {
+      this.$toast.loading({
+        duration: 0, // 展示时长(ms)，值为 0 时，toast 不会消失
+        message: '登陆中...', // 文本内容，支持通过\n换行
+        forbidClick: true // 是否禁止背景点击
+      })
       try {
         const res = await request({
           method: 'POST',
@@ -38,8 +43,10 @@ export default {
           data: this.user
         })
         console.log('登陆成功', res)
+        this.$toast.success('登陆成功')
       } catch (err) {
         console.log('登陆失败', err)
+        this.$toast.fail('登陆失败')
       }
     }
   }
