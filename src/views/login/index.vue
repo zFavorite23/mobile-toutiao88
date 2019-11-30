@@ -17,8 +17,8 @@
 </template>
 
 <script>
-// 引入axios
-import request from '@/utils/request'
+// 引入 请求
+import { login } from '@/api/user'
 export default {
   data () {
     return {
@@ -37,16 +37,12 @@ export default {
         forbidClick: true // 是否禁止背景点击
       })
       try {
-        const res = await request({
-          method: 'POST',
-          url: '/app/v1_0/authorizations',
-          data: this.user
-        })
+        const res = await login(this.user)
         console.log('登陆成功', res)
         this.$toast.success('登陆成功')
       } catch (err) {
         console.log('登陆失败', err)
-        this.$toast.fail('登陆失败')
+        this.$toast.fail('登陆失败,手机号或验证码有误')
       }
     }
   }
