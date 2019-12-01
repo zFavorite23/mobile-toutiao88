@@ -1,4 +1,5 @@
-// 用户请求模块
+
+// 用户相关数据接口
 
 // 引入axios
 import request from '@/utils/request'

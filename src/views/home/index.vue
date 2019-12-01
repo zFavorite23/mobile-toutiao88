@@ -12,9 +12,13 @@
              true 不在触发加载更多了，直接显示“没有跟多了”  false 继续触发加载跟多
           finished-text="没有更多了"  设置没有数据之后的提示文本
           @load="onLoad" 上拉加载更多触发的自定义事件-->
-          <van-list v-model="loading" :finished="item.finished" finished-text="没有更多了" @load="onLoad">
-            <p>{{item.name }}</p>
-            <van-cell v-for="item in item.articles" :key="item" :title="item" />
+          <van-list
+            v-model="loading"
+            :finished="item.finished"
+            finished-text="没有更多了"
+            @load="onLoad"
+          >
+            <van-cell v-for="item in item.articles" :key="item.aut_id.toString()" :title="item.title" />
           </van-list>
         </van-pull-refresh>
       </van-tab>
@@ -25,6 +29,7 @@
 <script>
 //  引入请求
 import { getUserChannels } from '@/api/user'
+import { getArticle } from '@/api/article'
 
 export default {
   name: 'Home',
@@ -45,28 +50,41 @@ export default {
   },
   methods: {
     // 上拉加载更多触发的自定义事件
-    onLoad () {
+    async onLoad () {
       // 获取当前频道
       const activeChannel = this.channels[this.active]
       // 当前频道的文章列表
       const articles = activeChannel.articles
       // 1. 请求加载数据
-      setTimeout(() => {
-        // 2. 将数据添加到当前频道的文章列表中
-        for (let i = 0; i < 10; i++) {
-          articles.push(articles.length + 1)
-        }
-        // 3. 将 loading 设置为 false
-        // 加载状态结束
-        // 关闭本次的 loading 状态，它会判定当前数据是否够一屏，不够就继续自动 onLoad
-        this.loading = false
-        // 4. 判断如果没有数据了，将当前频道的结束状态 finished 设置为 true
-        if (articles.length >= 40) {
-          activeChannel.finished = true
-        }
-      }, 1000)
+      const res = await getArticle({
+        channel_id: activeChannel.id, // 频道 id
+        // 获取下一页数据的时间戳，Date.now() 表示获取当前最新数据
+        timestamp: activeChannel.timestamp || Date.now(),
+        with_top: 1
+      })
+      // console.log(res)
+
+      // 2. 将数据添加到当前频道的文章列表中
+      // ...数组，数组的展开操作符，它会把数组元素一个一个的拿出来，传递给使用的位置
+      articles.push(...res.data.data.results)
+
+      // 3. 将 loading 设置为 false
+      // 加载状态结束
+      // 关闭本次的 loading 状态，它会判定当前数据是否够一屏，不够就继续自动 onLoad
+      this.loading = false
+
+      // 4. 判断还有下一页数据，则更新获取下一个数据的时间戳
+      //    如果没有了，则将 finished 设置为 true，不再加载更多了
+      const preTimestamp = res.data.data.pre_timestamp
+      if (preTimestamp) {
+        // 更新获取下一页数据的时间戳
+        activeChannel.timestamp = preTimestamp
+      } else {
+        activeChannel.finished = true
+      }
     },
 
+    // 下拉刷新
     onRefresh () {
       setTimeout(() => {
         this.$toast('刷新成功')
