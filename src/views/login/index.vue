@@ -39,8 +39,9 @@ export default {
       })
       try {
         const res = await login(this.user)
-        console.log('登陆成功', res)
+        // console.log('登陆成功', res)
         this.$store.commit('setUser', res.data.data)
+
         this.$toast.success('登陆成功')
       } catch (err) {
         console.log('登陆失败', err)

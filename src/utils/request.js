@@ -3,6 +3,8 @@
 import axios from 'axios'
 // 引入jsonBig
 import jsonBig from 'json-bigint'
+// 引入容器
+import store from '@/store'
 
 // axios.create 方法 ：复制一个axios
 const request = axios.create({
@@ -18,10 +20,14 @@ request.defaults.transformResponse = [function (data) {
   }
 }]
 
-// 请求拦截器
+// 请求拦截器(统一添加token)
 request.interceptors.request.use(
   function (config) {
     // Do something before request is sent
+    const user = store.state.user
+    if (user) {
+      config.headers.Authorization = `Bearer ${user.token}`
+    }
     return config
   },
   function (error) {
