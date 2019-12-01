@@ -7,6 +7,10 @@ import Login from '@/views/login'
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: '/',
+    redirect: '/login'
+  },
   // 登录页路由
   {
     path: '/login',
