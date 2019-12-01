@@ -6,7 +6,13 @@ import {
   CellGroup,
   NavBar,
   Field,
-  Toast
+  Toast,
+  Tabbar,
+  TabbarItem,
+  List,
+  Tab,
+  Tabs,
+  PullRefresh
 } from 'vant'
 
 Vue
@@ -16,3 +22,9 @@ Vue
   .use(NavBar)
   .use(Field)
   .use(Toast)
+  .use(Tabbar)
+  .use(TabbarItem)
+  .use(List)
+  .use(Tab)
+  .use(Tabs)
+  .use(PullRefresh)

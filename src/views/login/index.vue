@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <!-- 导航栏 -->
-    <van-nav-bar title="登陆" left-arrow style="color:#fff" />
+    <van-nav-bar title="登陆"/>
 
     <!-- 输入框 -->
     <van-cell-group>
