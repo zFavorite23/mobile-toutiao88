@@ -1,5 +1,5 @@
 
-// 封装 axios 模块
+// 封装 axios请求 模块
 import axios from 'axios'
 // 引入jsonBig
 import jsonBig from 'json-bigint'
