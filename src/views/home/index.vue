@@ -4,7 +4,7 @@
     <van-nav-bar title="首页" />
     <!-- 频道列表 -->
     <van-tabs v-model="active">
-      <van-tab title="标签 1">
+      <van-tab :title="item.name" v-for="item in channels" :key="item.id">
         <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
           <!-- 内容列表 -->
           <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
@@ -12,20 +12,19 @@
           </van-list>
         </van-pull-refresh>
       </van-tab>
-      <van-tab title="标签 2">内容 2</van-tab>
-      <van-tab title="标签 3">内容 3</van-tab>
-      <van-tab title="标签 4">内容 4</van-tab>
-      <van-tab title="标签 4">内容 4</van-tab>
-      <van-tab title="标签 4">内容 4</van-tab>
-      <van-tab title="标签 4">内容 4</van-tab>
     </van-tabs>
   </div>
 </template>
 
 <script>
+//  引入请求
+import { getUserChannels } from '@/api/user'
+
 export default {
+  name: 'Home',
   data () {
     return {
+      channels: [], // 频道列表
       active: '',
       list: [],
       loading: false,
@@ -33,6 +32,10 @@ export default {
       count: 0,
       isLoading: false
     }
+  },
+  created () {
+    // 获取频道列表
+    this.loadgetUserChannels()
   },
   methods: {
     onLoad () {
@@ -50,12 +53,20 @@ export default {
         }
       }, 500)
     },
+
     onRefresh () {
       setTimeout(() => {
         this.$toast('刷新成功')
         this.isLoading = false
         this.count++
       }, 500)
+    },
+
+    // 获取频道列表
+    async loadgetUserChannels () {
+      const res = await getUserChannels()
+      // console.log(res)
+      this.channels = res.data.data.channels
     }
   }
 }

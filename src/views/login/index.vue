@@ -41,6 +41,8 @@ export default {
         const res = await login(this.user)
         // console.log('登陆成功', res)
         this.$store.commit('setUser', res.data.data)
+        // 跳转到首页
+        this.$router.push('/')
 
         this.$toast.success('登陆成功')
       } catch (err) {
