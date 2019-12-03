@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="home">
     <!-- 导航栏 -->
     <van-nav-bar title="首页" />
     <!-- 频道列表 -->
@@ -32,7 +32,7 @@
               <div class="article-info">
                 <span>{{ article.aut_name }}</span>
                 <span>{{ article.comm_count }}评论</span>
-                <span>{{ article.pubdate }}</span>
+                <span>{{ article.pubdate | relativeTime }}</span>
               </div>
             </div>
             </van-cell>
@@ -141,7 +141,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .home {
   .article-info span {
     margin-right: 10px;
