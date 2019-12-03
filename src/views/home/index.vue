@@ -64,7 +64,11 @@
 
         <van-cell title="推荐频道" :border="false" />
         <van-grid :gutter="10">
-          <van-grid-item v-for="channel in AllChannels" :key="channel.id" :text="channel.name" />
+          <van-grid-item
+            v-for="channel in recommendChannels"
+            :key="channel.id"
+            :text="channel.name"
+          />
         </van-grid>
       </div>
     </van-popup>
@@ -92,6 +96,24 @@ export default {
   created () {
     // 获取频道列表
     this.loadgetUserChannels()
+  },
+  computed: {
+    // 除去我的频道 剩下的推荐频道
+    recommendChannels () {
+      const arr = []
+      // 遍历所有频道
+      this.AllChannels.forEach(channel => {
+        const ret = this.channels.find(item => {
+          // 如果有这个id则在这个频道中
+          return item.id === channel.id
+        })
+        // 如果不包含 则添加到我的频道中
+        if (!ret) {
+          arr.push(channel)
+        }
+      })
+      return arr
+    }
   },
   methods: {
     // 获取当前频道下的文章列表
@@ -167,7 +189,7 @@ export default {
       this.channels = channels
     },
 
-    // 打开弹窗
+    // 打开弹窗 获取所有频道
     async onChannelOpen () {
       const res = await getAllChannels()
       this.AllChannels = res.data.data.channels
