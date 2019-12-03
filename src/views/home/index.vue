@@ -1,7 +1,8 @@
 <template>
   <div class="home">
     <!-- 导航栏 -->
-    <van-nav-bar title="首页" fixed/>
+    <van-nav-bar title="首页" fixed />
+
     <!-- 频道列表 -->
     <van-tabs v-model="active">
       <van-tab :title="channel.name" v-for="channel in channels" :key="channel.id">
@@ -23,23 +24,49 @@
               :key="article.aut_id.toString()"
               :title="article.title"
             >
-            <div slot="label">
-              <van-grid :border="false" :column-num="3">
-                <van-grid-item v-for="(img, index) in article.cover.images" :key="index">
-                  <van-image height="80" :src="img" lazy-load/>
-                </van-grid-item>
-              </van-grid>
-              <div class="article-info">
-                <span>{{ article.aut_name }}</span>
-                <span>{{ article.comm_count }}评论</span>
-                <span>{{ article.pubdate | relativeTime }}</span>
+              <div slot="label">
+                <van-grid :border="false" :column-num="3">
+                  <van-grid-item v-for="(img, index) in article.cover.images" :key="index">
+                    <van-image height="80" :src="img" lazy-load />
+                  </van-grid-item>
+                </van-grid>
+                <div class="article-info">
+                  <span>{{ article.aut_name }}</span>
+                  <span>{{ article.comm_count }}评论</span>
+                  <span>{{ article.pubdate | relativeTime }}</span>
+                </div>
               </div>
-            </div>
             </van-cell>
           </van-list>
         </van-pull-refresh>
       </van-tab>
+
+      <van-icon slot="nav-right" name="wap-nav" class="icon" @click="isChannelsShow = true " />
     </van-tabs>
+
+    <!-- 频道弹窗 -->
+    <van-popup
+      v-model="isChannelsShow"
+      closeable
+      close-icon-position="top-right"
+      round
+      position="bottom"
+      :style="{ height: '90%' }"
+    >
+      <div class="channel-container">
+        <van-cell title="我的频道" :border="false">
+          <van-button type="danger" size="mini">编辑</van-button>
+        </van-cell>
+        <van-grid :gutter="10">
+          <van-grid-item v-for="channel in channels" :key="channel.id" :text="channel.name" />
+        </van-grid>
+
+        <van-cell title="推荐频道" :border="false" />
+        <van-grid :gutter="10">
+          <van-grid-item v-for="value in 8" :key="value" text="文字" />
+        </van-grid>
+      </div>
+    </van-popup>
   </div>
 </template>
 
@@ -54,10 +81,9 @@ export default {
     return {
       channels: [], // 频道列表
       active: '', // 频道列表索引
-      loading: false,
-      finished: false,
-      count: 0,
-      isLoading: false
+      loading: false, // 加载更多
+      isLoading: false, // 下拉刷新
+      isChannelsShow: false // 控制弹显示
     }
   },
   created () {
@@ -71,7 +97,7 @@ export default {
       const activeChannel = this.channels[this.active]
       // 当前频道的文章列表
       const articles = activeChannel.articles
-      console.log(articles)
+      // console.log(articles)
       // 1. 请求加载数据
       const res = await getArticle({
         channel_id: activeChannel.id, // 频道 id
@@ -157,9 +183,23 @@ export default {
       z-index: 2;
     }
     // 文章列表
-    /deep/ .van-tabs__content{
+    /deep/ .van-tabs__content {
       margin-top: 90px;
     }
+    // 列表图标
+    /deep/ .van-tabs__nav {
+      .icon {
+        position: sticky;
+        right: 0;
+        display: flex;
+        align-items: center;
+        background-color: #fff;
+        opacity: 0.8;
+      }
+    }
+  }
+  /deep/ .channel-container {
+    margin-top: 30px;
   }
 }
 </style>
