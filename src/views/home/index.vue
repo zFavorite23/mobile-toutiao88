@@ -18,7 +18,11 @@
             finished-text="没有更多了"
             @load="onLoad"
           >
-            <van-cell v-for="item in item.articles" :key="item.aut_id.toString()" :title="item.title" />
+            <van-cell
+              v-for="item in item.articles"
+              :key="item.aut_id.toString()"
+              :title="item.title"
+            />
           </van-list>
         </van-pull-refresh>
       </van-tab>
@@ -37,7 +41,6 @@ export default {
     return {
       channels: [], // 频道列表
       active: '', // 频道列表索引
-      list: [],
       loading: false,
       finished: false,
       count: 0,
@@ -49,7 +52,7 @@ export default {
     this.loadgetUserChannels()
   },
   methods: {
-    // 上拉加载更多触发的自定义事件
+    // 获取当前频道下的文章列表
     async onLoad () {
       // 获取当前频道
       const activeChannel = this.channels[this.active]
@@ -60,7 +63,7 @@ export default {
         channel_id: activeChannel.id, // 频道 id
         // 获取下一页数据的时间戳，Date.now() 表示获取当前最新数据
         timestamp: activeChannel.timestamp || Date.now(),
-        with_top: 1
+        with_top: 1 // 是否置顶
       })
       // console.log(res)
 
@@ -85,12 +88,25 @@ export default {
     },
 
     // 下拉刷新
-    onRefresh () {
-      setTimeout(() => {
-        this.$toast('刷新成功')
-        this.isLoading = false
-        this.count++
-      }, 500)
+    async onRefresh () {
+      // 获取当前频道
+      const activeChannel = this.channels[this.active]
+      // 1.请求获取最新数据
+      const res = await getArticle({
+        channel_id: activeChannel.id,
+        timestamp: Date.now(), // 获取最新时间戳即可
+        with_top: 1
+      })
+      // 2.把最新数据放到最顶部
+      const newArticles = res.data.data.results
+      activeChannel.articles.unshift(...newArticles)
+      // 3.停止下拉刷新
+      this.isLoading = false
+      // 4.提示用户刷新成功
+      const message = newArticles.length
+        ? `更新${newArticles.length}条数据`
+        : '暂无数据更新'
+      this.$toast(message)
     },
 
     // 获取频道列表
@@ -102,6 +118,7 @@ export default {
       channels.forEach(element => {
         element.articles = [] // 频道的文章列表
         element.finished = false // 频道的加载结束状态
+        element.timestamp = null // 用于获取频道下一页数据的时间戳
       })
       // console.log(channels)
       this.channels = channels
