@@ -51,7 +51,8 @@
       close-icon-position="top-right"
       round
       position="bottom"
-      :style="{ height: '90%' }"
+      :style="{ height: '95%' }"
+      @open="onChannelOpen"
     >
       <div class="channel-container">
         <van-cell title="我的频道" :border="false">
@@ -63,7 +64,7 @@
 
         <van-cell title="推荐频道" :border="false" />
         <van-grid :gutter="10">
-          <van-grid-item v-for="value in 8" :key="value" text="文字" />
+          <van-grid-item v-for="channel in AllChannels" :key="channel.id" :text="channel.name" />
         </van-grid>
       </div>
     </van-popup>
@@ -74,6 +75,7 @@
 //  引入请求
 import { getUserChannels } from '@/api/user'
 import { getArticle } from '@/api/article'
+import { getAllChannels } from '@/api/channels'
 
 export default {
   name: 'Home',
@@ -83,7 +85,8 @@ export default {
       active: '', // 频道列表索引
       loading: false, // 加载更多
       isLoading: false, // 下拉刷新
-      isChannelsShow: false // 控制弹显示
+      isChannelsShow: false, // 控制弹显示
+      AllChannels: [] // 所有频道
     }
   },
   created () {
@@ -162,6 +165,12 @@ export default {
       })
       // console.log(channels)
       this.channels = channels
+    },
+
+    // 打开弹窗
+    async onChannelOpen () {
+      const res = await getAllChannels()
+      this.AllChannels = res.data.data.channels
     }
   }
 }
