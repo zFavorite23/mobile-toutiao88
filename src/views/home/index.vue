@@ -68,6 +68,7 @@
             v-for="channel in recommendChannels"
             :key="channel.id"
             :text="channel.name"
+            @click="onChannelAll(channel)"
           />
         </van-grid>
       </div>
@@ -193,6 +194,11 @@ export default {
     async onChannelOpen () {
       const res = await getAllChannels()
       this.AllChannels = res.data.data.channels
+    },
+
+    // 添加到我的频道
+    onChannelAll (channel) {
+      this.channels.push(channel)
     }
   }
 }
