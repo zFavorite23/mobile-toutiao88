@@ -9,6 +9,8 @@ import Tabbar from '@/views/tabbar'
 import Home from '@/views/home'
 // 引入搜索页
 import Search from '@/views/search'
+// 引入搜索详情页
+import SearchResult from '@/views/search-result'
 
 Vue.use(VueRouter)
 
@@ -34,9 +36,15 @@ const routes = [
       }
     ]
   },
+  // 搜索页
   {
     path: '/search',
     component: Search
+  },
+  // 搜索详情页
+  {
+    path: '/search/:q',
+    component: SearchResult
   }
 ]
 

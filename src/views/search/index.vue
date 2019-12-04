@@ -9,13 +9,19 @@
       @search="onSearch"
       @input="onSearchInput"
     >
-      <div slot="action" @click="onSearch">搜索</div>
+      <div slot="action" @click="onSearch(searchText)">搜索</div>
     </van-search>
     <!-- /搜索框 -->
 
     <!-- 联想建议 -->
     <van-cell-group>
-      <van-cell :title="item" :key="item" icon="search" v-for="item in suggestions">
+      <van-cell
+        :title="item"
+        :key="item"
+        icon="search"
+        v-for="item in suggestions"
+        @click="onSearch(item)"
+      >
         <!-- 我们要把 item 处理成带有高亮的字符串 -->
         <!-- 过滤器：专门用于文本格式化，但是它只能用在 {{}} 和 v-bind 中 -->
         <div slot="title" v-html="highlight(item)"></div>
@@ -54,7 +60,10 @@ export default {
     }
   },
   methods: {
-    onSearch () {},
+    // 搜索处理函数
+    onSearch (q) {
+      this.$router.push(`/search/${q}`)
+    },
 
     // 搜索联想
     async onSearchInput () {
@@ -76,7 +85,10 @@ export default {
       // 参数2：用来指定匹配模式，例如 g 全局，i 忽略大小写
       // /dsadsa/gi
       const reg = new RegExp(this.searchText, 'ig')
-      return str.replace(reg, `<span style="color: red">${this.searchText}</span>`)
+      return str.replace(
+        reg,
+        `<span style="color: red">${this.searchText}</span>`
+      )
     }
   }
 }
