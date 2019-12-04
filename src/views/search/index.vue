@@ -14,7 +14,7 @@
     <!-- /搜索框 -->
 
     <!-- 联想建议 -->
-    <van-cell-group>
+    <van-cell-group v-show="searchText">
       <van-cell
         :title="item"
         :key="item"
@@ -30,14 +30,16 @@
     <!-- /联想建议 -->
 
     <!-- 搜索历史记录 -->
-    <van-cell-group>
+    <van-cell-group v-show="!searchText">
       <van-cell title="历史记录">
-        <span>全部删除</span>&nbsp;&nbsp;
-        <span>完成</span>
-        <van-icon name="delete" />
+        <div v-show="isDeleteShow">
+          <span @click="searchHistories=[]">全部删除</span>&nbsp;&nbsp;
+          <span @click="isDeleteShow=false">完成</span>
+        </div>
+        <van-icon name="delete" v-show="!isDeleteShow" @click="isDeleteShow=true " />
       </van-cell>
-      <van-cell :title="item" v-for="item in searchHistories" :key="item" >
-        <van-icon name="close" />
+      <van-cell :title="item" v-for="(item,index) in searchHistories" :key="item">
+        <van-icon name="close" v-show="isDeleteShow" @click="searchHistories.splice(index,1)" />
       </van-cell>
     </van-cell-group>
     <!-- /搜索历史记录 -->
@@ -55,7 +57,13 @@ export default {
     return {
       searchText: '', // 搜索框输出内容
       suggestions: [], // 搜索联想建议数据列表
-      searchHistories: getItem('search-histories') || []// 搜索历史记录
+      searchHistories: getItem('search-histories') || [], // 搜索历史记录
+      isDeleteShow: false // 控制删除历史记录的显示状态
+    }
+  },
+  watch: {
+    searchHistories () {
+      setItem('search-histories', this.searchHistories)
     }
   },
   methods: {

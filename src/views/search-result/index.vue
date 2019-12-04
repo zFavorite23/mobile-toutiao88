@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 导航栏 -->
-    <van-nav-bar :title="`${this.$route.params.q}的搜索结果`" left-arrow />
+    <van-nav-bar :title="`${this.$route.params.q}的搜索结果`" left-arrow @click-left="$router.back()"/>
     <!-- 导航栏 -->
 
     <!-- 文章列表 -->
