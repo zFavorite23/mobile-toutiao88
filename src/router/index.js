@@ -7,6 +7,9 @@ import Login from '@/views/login'
 import Tabbar from '@/views/tabbar'
 // 引入首页
 import Home from '@/views/home'
+// 引入搜索页
+import Search from '@/views/search'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -30,6 +33,10 @@ const routes = [
         component: Home
       }
     ]
+  },
+  {
+    path: '/search',
+    component: Search
   }
 ]
 
