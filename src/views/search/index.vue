@@ -36,10 +36,7 @@
         <span>完成</span>
         <van-icon name="delete" />
       </van-cell>
-      <van-cell title="单元格">
-        <van-icon name="close" />
-      </van-cell>
-      <van-cell title="单元格">
+      <van-cell :title="item" v-for="item in searchHistories" :key="item" >
         <van-icon name="close" />
       </van-cell>
     </van-cell-group>
@@ -50,18 +47,36 @@
 <script>
 // 引入请求
 import { getSuggestions } from '@/api/search'
+import { getItem, setItem } from '@/utils/storage'
 
 export default {
   name: 'search',
   data () {
     return {
       searchText: '', // 搜索框输出内容
-      suggestions: [] // 搜索联想建议数据列表
+      suggestions: [], // 搜索联想建议数据列表
+      searchHistories: getItem('search-histories') || []// 搜索历史记录
     }
   },
   methods: {
     // 搜索处理函数
     onSearch (q) {
+      // 先非空处理
+      if (!q.trim()) {
+        return
+      }
+      // 在跳转之前将搜索的关键字记录到搜索历史记录中
+      const index = this.searchHistories.indexOf(q)
+      if (index !== -1) {
+        // 如果有重复的就删除掉
+        this.searchHistories.splice(index, 1)
+      }
+      // 最新的放在最前面
+      this.searchHistories.unshift(q)
+      // 将数据存到本地 持久化
+      setItem('search-histories', this.searchHistories)
+
+      // 带着关键词 跳转到列表详情页
       this.$router.push(`/search/${q}`)
     },
 
