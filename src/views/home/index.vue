@@ -56,18 +56,25 @@
     >
       <div class="channel-container">
         <van-cell title="我的频道" :border="false">
-          <van-button type="danger" size="mini" @click="isEditShow = !isEditShow">
-            {{ isEditShow ? '完成' : '编辑' }}
-          </van-button>
+          <van-button
+            type="danger"
+            size="mini"
+            @click="isEditShow = !isEditShow"
+          >{{ isEditShow ? '完成' : '编辑' }}</van-button>
         </van-cell>
         <van-grid :gutter="10">
           <van-grid-item
-          v-for="(channel,index) in channels"
-          :key="channel.id"
-          :text="channel.name"
-          @click="onChannelActiveOrDelete(index)"
+            v-for="(channel,index) in channels"
+            :key="channel.id"
+            :text="channel.name"
+            @click="onChannelActiveOrDelete(channel, index)"
           >
-            <van-icon slot="icon" name="close" size="15" v-show="isEditShow" />
+            <van-icon
+              slot="icon"
+              name="close"
+              size="15"
+              v-show="isEditShow && channel.name != '推荐' "
+            />
           </van-grid-item>
         </van-grid>
 
@@ -90,6 +97,7 @@
 import { getUserChannels } from '@/api/user'
 import { getArticle } from '@/api/article'
 import { getAllChannels } from '@/api/channels'
+import { getItem, setItem } from '@/utils/storage'
 
 export default {
   name: 'Home',
@@ -107,6 +115,12 @@ export default {
   created () {
     // 获取频道列表
     this.loadgetUserChannels()
+  },
+  watch: {
+    // 频道列表存入到本地
+    channels () {
+      setItem('channels', this.channels)
+    }
   },
   computed: {
     // 除去我的频道 剩下的推荐频道
@@ -187,15 +201,26 @@ export default {
 
     // 获取频道列表
     async loadgetUserChannels () {
-      const res = await getUserChannels()
-      // console.log(res)
-      const channels = res.data.data.channels
-      // 给每一个频道添加一个数据 用来存储频道的文章列表
-      channels.forEach(element => {
-        element.articles = [] // 频道的文章列表
-        element.finished = false // 频道的加载结束状态
-        element.timestamp = null // 用于获取频道下一页数据的时间戳
-      })
+      let channels = []
+      // 获取本地数据
+      const loadChannels = getItem('channels')
+      // 如果有本地数据则使用本地数据
+      if (loadChannels) {
+        channels = loadChannels
+      } else {
+        // 没有数据则获取线上数据
+        const res = await getUserChannels()
+        // console.log(res)
+        const onLinechannels = res.data.data.channels
+        // 给每一个频道添加一个数据 用来存储频道的文章列表
+        onLinechannels.forEach(element => {
+          element.articles = [] // 频道的文章列表
+          element.finished = false // 频道的加载结束状态
+          element.timestamp = null // 用于获取频道下一页数据的时间戳
+        })
+        channels = onLinechannels
+      }
+
       // console.log(channels)
       this.channels = channels
     },
@@ -203,6 +228,11 @@ export default {
     // 打开弹窗 获取所有频道
     async onChannelOpen () {
       const res = await getAllChannels()
+      res.data.data.channels.forEach(element => {
+        element.articles = [] // 频道的文章列表
+        element.finished = false // 频道的加载结束状态
+        element.timestamp = null // 用于获取频道下一页数据的时间戳
+      })
       this.AllChannels = res.data.data.channels
     },
 
@@ -212,9 +242,9 @@ export default {
     },
 
     // 切换频道和删除频道
-    onChannelActiveOrDelete (index) {
-      if (this.isEditShow) {
-        // 如果是编辑状态怎删除
+    onChannelActiveOrDelete (channel, index) {
+      if (this.isEditShow && channel.name !== '推荐') {
+        // 如果是编辑状态切频道不为 推荐 则删除
         this.channels.splice(index, 1)
       } else {
         // 不是编辑状态则切换到该频道
