@@ -39,19 +39,34 @@
 </template>
 
 <script>
+// 引入请求
+import { getArticle } from '@/api/article'
+
 export default {
   name: 'ArticleIndex',
   data () {
     return {
       loading: true, // 控制加载中的 loading 状态
-      article: {
-        // 文章详情
-        title: 'hello world',
-        content: '<p>hello hello</p>',
-        aut_name: 'LPZ',
-        pubdate: '4天前',
-        aut_photo: 'http://toutiao.meiduo.site/FsyeQUotMscq-vji-2ZDiXrc44k5'
-      }
+      // 文章详情
+
+      article: {}
+    }
+  },
+  props: {
+    articleId: {
+      type: String,
+      required: true
+    }
+  },
+  created () {
+    this.loadArticle()
+  },
+  methods: {
+    async loadArticle () {
+      //   const id = this.$router.params.articleId
+      const res = await getArticle(this.articleId)
+      //   console.log(res)
+      this.article = res.data.data
     }
   }
 }

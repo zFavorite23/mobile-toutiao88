@@ -50,8 +50,10 @@ const routes = [
   },
   // 文章详情页
   {
+    name: 'article',
     path: '/article/:articleId',
-    component: Article
+    component: Article,
+    props: true
   }
 ]
 
