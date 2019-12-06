@@ -11,6 +11,8 @@ import Home from '@/views/home'
 import Search from '@/views/search'
 // 引入搜索详情页
 import SearchResult from '@/views/search-result'
+// 引入文章详情页
+import Article from '@/views/article'
 
 Vue.use(VueRouter)
 
@@ -45,6 +47,11 @@ const routes = [
   {
     path: '/search/:q',
     component: SearchResult
+  },
+  // 文章详情页
+  {
+    path: '/article/:articleId',
+    component: Article
   }
 ]
 
