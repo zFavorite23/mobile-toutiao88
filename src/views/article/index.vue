@@ -26,7 +26,15 @@
       </div>
       <div class="content" v-html="article.content"></div>
       <div class="zan">
-        <van-button round size="small" hairline type="primary" plain icon="good-job-o">点赞</van-button>&nbsp;&nbsp;&nbsp;&nbsp;
+        <van-button
+          round
+          size="small"
+          hairline
+          type="primary"
+          plain
+          icon="good-job-o"
+          @click="onLike"
+        >{{ article.attitude === 1 ? '取消点赞' : '点赞' }}</van-button>&nbsp;&nbsp;&nbsp;&nbsp;
         <van-button round size="small" hairline type="danger" plain icon="delete">不喜欢</van-button>
       </div>
     </div>
@@ -45,7 +53,7 @@
 
 <script>
 // 引入请求
-import { getArticle } from '@/api/article'
+import { getArticle, addLike, deleteLike } from '@/api/article'
 import { followUser, unFollowUser } from '@/api/user'
 
 export default {
@@ -75,7 +83,7 @@ export default {
       try {
         //   const id = this.$router.params.articleId
         const res = await getArticle(this.articleId)
-        console.log(this.articleId)
+        // console.log(this.articleId)
         //   console.log(res)
         this.article = res.data.data
       } catch (err) {
@@ -98,6 +106,21 @@ export default {
       }
       // 更新视图
       this.article.is_followed = !this.article.is_followed
+    },
+
+    // 用户点赞
+    async onLike () {
+      if (this.article.attitude === 1) {
+        // 点赞
+        await addLike(this.articleId)
+        // 更新视图
+        this.article.attitude = -1
+      } else {
+        // 取消点赞
+        await deleteLike(this.articleId)
+        // 更新视图
+        this.article.attitude = 1
+      }
     }
   }
 }
