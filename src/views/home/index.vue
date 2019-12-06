@@ -110,7 +110,7 @@
 <script>
 //  引入请求
 import { getUserChannels } from '@/api/user'
-import { getArticle } from '@/api/article'
+import { getArticles } from '@/api/article'
 import { getAllChannels } from '@/api/channels'
 import { getItem, setItem } from '@/utils/storage'
 
@@ -164,7 +164,7 @@ export default {
       const articles = activeChannel.articles
       // console.log(articles)
       // 1. 请求加载数据
-      const res = await getArticle({
+      const res = await getArticles({
         channel_id: activeChannel.id, // 频道 id
         // 获取下一页数据的时间戳，Date.now() 表示获取当前最新数据
         timestamp: activeChannel.timestamp || Date.now(),
@@ -197,7 +197,7 @@ export default {
       // 获取当前频道
       const activeChannel = this.channels[this.active]
       // 1.请求获取最新数据
-      const res = await getArticle({
+      const res = await getArticles({
         channel_id: activeChannel.id,
         timestamp: Date.now(), // 获取最新时间戳即可
         with_top: 1

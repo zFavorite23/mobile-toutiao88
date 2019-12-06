@@ -17,7 +17,12 @@
           <p class="name">{{article.aut_name}}</p>
           <p class="time">{{article.pubdate}}</p>
         </div>
-        <van-button round size="small" type="info">+ 关注</van-button>
+        <van-button
+          round
+          size="small"
+          type="info"
+          @click="onFollow"
+        >{{ article.is_followed ? '取消关注' : '+ 关注' }}</van-button>
       </div>
       <div class="content" v-html="article.content"></div>
       <div class="zan">
@@ -41,6 +46,7 @@
 <script>
 // 引入请求
 import { getArticle } from '@/api/article'
+import { followUser, unFollowUser } from '@/api/user'
 
 export default {
   name: 'ArticleIndex',
@@ -69,6 +75,7 @@ export default {
       try {
         //   const id = this.$router.params.articleId
         const res = await getArticle(this.articleId)
+        console.log(this.articleId)
         //   console.log(res)
         this.article = res.data.data
       } catch (err) {
@@ -76,6 +83,21 @@ export default {
       }
       // 关闭转圈圈
       this.loading = false
+    },
+
+    // 关注用户
+    async onFollow () {
+      // 用户id
+      const userId = this.article.aut_id
+      if (this.article.is_followed) {
+        // 如果关注了 取消换关注
+        await unFollowUser(userId)
+      } else {
+        // 如果没有关注 则关注用户
+        await followUser(userId)
+      }
+      // 更新视图
+      this.article.is_followed = !this.article.is_followed
     }
   }
 }
