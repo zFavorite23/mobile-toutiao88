@@ -35,7 +35,7 @@
               @click="$router.push({
                 name: 'article',
                 params:{
-                    articleId:article.art_id
+                    articleId:article.art_id.toString()
                 }
               })"
             >
