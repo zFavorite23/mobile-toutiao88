@@ -19,14 +19,19 @@
             <van-button size="mini" type="default">回复</van-button>
           </p>
         </div>
-        <van-icon slot="right-icon" name="like-o" />
+        <van-icon
+          slot="right-icon"
+          color="red"
+          :name="item.is_liking ? 'like' : 'like-o'"
+          @click="onCommentLike(item)"
+        />
       </van-cell>
     </van-list>
     <!-- 评论列表 -->
 
     <!-- 发布评论 -->
     <van-cell-group class="publish-wrap">
-      <van-field v-model="inputComment" clearable placeholder="请输入评论内容" >
+      <van-field v-model="inputComment" clearable placeholder="请输入评论内容">
         <van-button slot="button" size="mini" type="info" @click="onAddComment">发布</van-button>
       </van-field>
     </van-cell-group>
@@ -36,7 +41,12 @@
 
 <script>
 // 引入请求
-import { getComments, addComment } from '@/api/comment'
+import {
+  getComments,
+  addComment,
+  addCommentLike,
+  deleteCommentLike
+} from '@/api/comment'
 
 export default {
   name: 'ArticleComment',
@@ -92,6 +102,20 @@ export default {
       this.list.unshift(res.data.data.new_obj)
       // 清空输入框
       this.inputComment = ''
+    },
+
+    // 喜欢按钮
+    async onCommentLike (comment) {
+      // 如果点赞 则取消点赞
+      if (comment.is_liking) {
+        await deleteCommentLike(comment.com_id)
+      } else {
+        // 如果没有点赞 则点赞
+        await addCommentLike(comment.com_id)
+      }
+      // 更新视图
+      comment.is_liking = !comment.is_liking
+      this.$toast('操作成功')
     }
   }
 }
