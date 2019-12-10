@@ -31,7 +31,7 @@
     <!-- 未登录 -->
     <div class="not-login" v-else>
       <div class="circle" @click="$router.push({ name: 'login' })">
-        <span>登录</span>
+        <span @click="$router.push('/login')">登录</span>
       </div>
     </div>
     <!-- /未登录 -->
@@ -57,11 +57,19 @@
 </template>
 
 <script>
+// 引入需求
+import { getSelf } from '@/api/user'
+
 export default {
   name: 'UserIndex',
   data () {
     return {
       user: {} // 用户信息对象
+    }
+  },
+  created () {
+    if (this.$store.state.user) {
+      this.loadUser()
     }
   },
   methods: {
@@ -85,9 +93,16 @@ export default {
           // on confirm
         })
         .catch(() => {
-        //   取消执行这里
+          //   取消执行这里
           // on cancel
         })
+    },
+
+    // 获取登陆用户信息
+    async loadUser () {
+      const res = await getSelf()
+      //   console.log(res)
+      this.user = res.data.data
     }
   }
 }
