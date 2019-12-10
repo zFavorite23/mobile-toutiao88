@@ -6,14 +6,6 @@
     </van-nav-bar>
     <!-- /导航栏 -->
 
-    <!-- 发布评论 -->
-    <van-cell-group class="publish-wrap">
-      <van-field v-model="inputComment" clearable placeholder="请输入评论内容">
-        <van-button slot="button" size="mini" type="info" @click="onAddComment">发布</van-button>
-      </van-field>
-    </van-cell-group>
-    <!-- /发布评论 -->
-
     <!-- 当前评论 -->
     <van-cell title="当前评论">
       <van-image
@@ -37,6 +29,43 @@
     <!-- /当前评论 -->
 
     <van-cell title="全部评论" />
+
+    <!-- 回复列表 -->
+    <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+      <van-cell v-for="item in list" :key="item.com_id.toString()">
+        <van-image
+          slot="icon"
+          round
+          width="30"
+          height="30"
+          style="margin-right: 10px;"
+          :src="item.aut_photo"
+        />
+        <span style="color: #466b9d;" slot="title">{{ item.aut_name }}</span>
+        <div slot="label">
+          <p style="color: #363636;">{{ item.content }}</p>
+          <p>
+            <span style="margin-right: 10px;">{{ item.pubdate | relativeTime }}</span>
+            <van-button size="mini" type="default" @click="onReplyShow(item)">回复</van-button>
+          </p>
+        </div>
+        <van-icon
+          slot="right-icon"
+          color="red"
+          :name="item.is_liking ? 'like' : 'like-o'"
+          @click="onCommentLike(item)"
+        />
+      </van-cell>
+    </van-list>
+    <!-- 回复列表 -->
+
+    <!-- 发布回复-->
+    <van-cell-group class="publish-wrap">
+      <van-field v-model="inputComment" clearable placeholder="请输入评论内容">
+        <van-button slot="button" size="mini" type="info" @click="onAddComment">发布</van-button>
+      </van-field>
+    </van-cell-group>
+    <!-- /发布回复-->
   </div>
 </template>
 
@@ -79,7 +108,7 @@ export default {
       // 2. 将数据添加到列表中
       this.list.push(...res.data.data.results)
       // 3. 关闭转圈圈
-      this.loading = true
+      this.loading = false
       // 4. 判断如果没有数据了，则将 finished 设置为 true
       const lastId = res.data.data.last_id
       if (lastId) {

@@ -15,6 +15,8 @@ import SearchResult from '@/views/search-result'
 import Article from '@/views/article'
 // 引入我的
 import My from '@/views/my'
+// 引入个人信息
+import User from '@/views/user'
 
 Vue.use(VueRouter)
 
@@ -61,6 +63,11 @@ const routes = [
     path: '/article/:articleId',
     component: Article,
     props: true
+  },
+  // 个人信息
+  {
+    path: '/user',
+    component: User
   }
 ]
 

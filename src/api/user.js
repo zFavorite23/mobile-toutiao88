@@ -52,3 +52,11 @@ export function getSelf () {
     url: '/app/v1_0/user'
   })
 }
+
+// 获取个人信息
+export function getProfile (userId) {
+  return request({
+    method: 'GET',
+    url: '/app/v1_0/user/profile'
+  })
+}
