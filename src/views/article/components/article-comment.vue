@@ -95,7 +95,7 @@ export default {
       // 2. 将数据添加到列表中
       this.list.push(...res.data.data.results)
       // 3. 关闭转圈圈
-      this.loading = true
+      this.loading = false
       // 4. 判断如果没有数据了，则将 finished 设置为 true
       const lastId = res.data.data.last_id
       if (lastId) {

@@ -13,6 +13,8 @@ import Search from '@/views/search'
 import SearchResult from '@/views/search-result'
 // 引入文章详情页
 import Article from '@/views/article'
+// 引入我的
+import My from '@/views/my'
 
 Vue.use(VueRouter)
 
@@ -35,6 +37,11 @@ const routes = [
       {
         path: '', // 默认子路由
         component: Home
+      },
+      // 我的
+      {
+        path: '/my',
+        component: My
       }
     ]
   },

@@ -20,7 +20,8 @@ import {
   Popup,
   Icon,
   Search,
-  Loading
+  Loading,
+  Dialog
 } from 'vant'
 
 Vue
@@ -44,3 +45,4 @@ Vue
   .use(Icon)
   .use(Search)
   .use(Loading)
+  .use(Dialog)
